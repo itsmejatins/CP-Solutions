@@ -1,4 +1,4 @@
-package contests.easy;
+package codeforces.a;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -60,6 +60,9 @@ public class MagicalSticks
 			int n = sc.nextInt();
 			System.out.println((n + 1) >> 1);
 			// or System.out.println((int)Math.ceil(n / 2.0));
+			
+			// if n is even, pick leftmost and rightmost
+			// if n is odd, leave the rightmost and do as in even.
 		}
 	}
 
