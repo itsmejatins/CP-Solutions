@@ -1,15 +1,13 @@
 package codeforces.c.littleAlawnsPuzzle.solution1;
 
-import java.io.BufferedReader;
+import java.io.DataInputStream;
+import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.StringTokenizer;
 
 // two times faster than solution 2
 // second solution is the tutorial one.
@@ -109,45 +107,118 @@ public class LittleAlawnsPuzzle {
 	}
 
 	static class FastScanner {
-		private BufferedReader br;
-		private StringTokenizer st;
+		final private int BUFFER_SIZE = 1 << 16;
+		private DataInputStream din;
+		private byte[] buffer;
+		private int bufferPointer, bytesRead;
 
-		public FastScanner(InputStream stream) {
-			try {
-				br = new BufferedReader(new InputStreamReader(stream));
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
+		public FastScanner() {
+			din = new DataInputStream(System.in);
+			buffer = new byte[BUFFER_SIZE];
+			bufferPointer = bytesRead = 0;
 		}
 
-		public String next() {
-			while (st == null || !st.hasMoreTokens()) {
-				try {
-					st = new StringTokenizer(br.readLine());
-				} catch (IOException e) {
-					e.printStackTrace();
+		public FastScanner(String file_name) throws IOException {
+			din = new DataInputStream(new FileInputStream(file_name));
+			buffer = new byte[BUFFER_SIZE];
+			bufferPointer = bytesRead = 0;
+		}
+
+		public String readLine() throws IOException {
+			byte[] buf = new byte[64]; // line length
+			int cnt = 0, c;
+			while ((c = read()) != -1) {
+				if (c == '\n') {
+					if (cnt != 0) {
+						break;
+					} else {
+						continue;
+					}
+				}
+				buf[cnt++] = (byte) c;
+			}
+			return new String(buf, 0, cnt);
+		}
+
+		public int nextInt() throws IOException {
+			int ret = 0;
+			byte c = read();
+			while (c <= ' ') {
+				c = read();
+			}
+			boolean neg = (c == '-');
+			if (neg)
+				c = read();
+			do {
+				ret = ret * 10 + c - '0';
+			} while ((c = read()) >= '0' && c <= '9');
+
+			if (neg)
+				return -ret;
+			return ret;
+		}
+
+		public long nextLong() throws IOException {
+			long ret = 0;
+			byte c = read();
+			while (c <= ' ')
+				c = read();
+			boolean neg = (c == '-');
+			if (neg)
+				c = read();
+			do {
+				ret = ret * 10 + c - '0';
+			} while ((c = read()) >= '0' && c <= '9');
+			if (neg)
+				return -ret;
+			return ret;
+		}
+
+		public double nextDouble() throws IOException {
+			double ret = 0, div = 1;
+			byte c = read();
+			while (c <= ' ')
+				c = read();
+			boolean neg = (c == '-');
+			if (neg)
+				c = read();
+
+			do {
+				ret = ret * 10 + c - '0';
+			} while ((c = read()) >= '0' && c <= '9');
+
+			if (c == '.') {
+				while ((c = read()) >= '0' && c <= '9') {
+					ret += (c - '0') / (div *= 10);
 				}
 			}
-			return st.nextToken();
+
+			if (neg)
+				return -ret;
+			return ret;
 		}
 
-		public int nextInt() {
-			return Integer.parseInt(next());
+		private void fillBuffer() throws IOException {
+			bytesRead = din.read(buffer, bufferPointer = 0, BUFFER_SIZE);
+			if (bytesRead == -1)
+				buffer[0] = -1;
 		}
 
-		public void close() {
-			try {
-				br.close();
-			} catch (IOException e) {
-				System.err.println("Error in closing fast scanner");
-				e.printStackTrace();
-			}
+		private byte read() throws IOException {
+			if (bufferPointer == bytesRead)
+				fillBuffer();
+			return buffer[bufferPointer++];
 		}
 
+		public void close() throws IOException {
+			if (din == null)
+				return;
+			din.close();
+		}
 	}
 
-	public static void main(String[] args) {
-		FastScanner sc = new FastScanner(System.in);
+	public static void main(String[] args) throws IOException {
+		FastScanner sc = new FastScanner();
 		int t_ = sc.nextInt();
 		for (int t = 0; t < t_; t++) {
 			int n = sc.nextInt();
